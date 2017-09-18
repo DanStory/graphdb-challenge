@@ -1,0 +1,13 @@
+{
+  "name": "graph-db.client",
+  "version": "0.0.0",
+  "description": "GraphDb.Client",
+  "main": "server.js",
+  "author": {
+    "name": "danstory"
+  },
+  "dependencies": {
+    "finalhandler": "^1.0.4",
+    "serve-static": "^1.12.4"
+  }
+}
