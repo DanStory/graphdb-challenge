@@ -13,13 +13,6 @@ namespace GraphDb.ExampleData
 		static readonly Random Random = new Random((int)(DateTime.UtcNow.Ticks % int.MaxValue));
 	    private static readonly GraphDbAPI Client = new GraphDbAPI(new Uri("http://localhost:8080/"));
 
-		public enum GenerateAction
-	    {
-		 IpAddress,
-		 Domain,
-		 ChildDomain
-	    }
-
         static void Main(string[] args)
         {
 			Console.WriteLine("Press any key to continue...");
@@ -30,19 +23,19 @@ namespace GraphDb.ExampleData
 
 	        var batchSize = 100;
 
-			Console.WriteLine("`tAdding domains");
+			Console.WriteLine("\tAdding domains");
 		    PostBatch(Client.V1NodesDomainsPost, exampleData.Domains, batchSize);
 
-		    Console.WriteLine("`tAdding ip addresses");
+		    Console.WriteLine("\tAdding ip addresses");
 			PostBatch(Client.V1NodesIpAddressesPost, exampleData.IpAddresses, batchSize);
 
 
 		    var relationshipDnsClient = new V1RelationshipsDNS(Client);
 
-		    Console.WriteLine("`tAdding ip address -> domain relationships");
+		    Console.WriteLine("\tAdding ip address -> domain relationships");
 			PostBatch(relationshipDnsClient.PTRsPost, exampleData.DnsPtrs, batchSize);
 
-		    Console.WriteLine("`tAdding domain -> domain relationships");
+		    Console.WriteLine("\tAdding domain -> domain relationships");
 			PostBatch(relationshipDnsClient.CHILDsPost, exampleData.DnsChild, batchSize);
 
 			Console.WriteLine("Done generating sample data");

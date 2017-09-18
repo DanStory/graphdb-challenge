@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  graphdb.api:
+    image: graphdb.api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
