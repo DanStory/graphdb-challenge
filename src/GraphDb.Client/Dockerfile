@@ -1,5 +1,8 @@
 FROM node:6.11
-ARG source
+RUN mkdir /app
 WORKDIR /app
 EXPOSE 80
-COPY ${source:-obj/Docker/publish} .
+ENV PORT=80
+ENTRYPOINT ["npm", "start"]
+COPY . .
+RUN npm install
