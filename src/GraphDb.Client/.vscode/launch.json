@@ -5,7 +5,10 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Launch Program",
-                "program": "${workspaceRoot}/server.js"
+                "program": "${workspaceRoot}\\server.js",
+                "env": {
+                    "APIURL":"http://localhost:7730"
+                }
             }
         ]
     }

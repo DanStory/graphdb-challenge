@@ -2,52 +2,185 @@
 <meta charset="utf-8">
 <style>
 
-	.links line {
+	line.link {
 		stroke-opacity: 0.6;
 		stroke-width: 2;
 	}
 
-	.links line.dns_ptr {
+	line.dns_ptr {
 		stroke: #0000ff;
 	}
 
-	.links line.dns_child {
+	line.dns_child {
 		stroke: #ff0000;
 	}
 
-	.nodes circle {
+	g.node circle {
 		stroke: #000;
 		stroke-width: 1;
 	}
 
-	.nodes circle .domain {
+	g.node circle.domain {
 		fill: #90ee90;
 	}
 
-	.nodes circle.ipaddress {
+	g.node circle.ipaddress {
 		fill: #40e0d0;
 	}
 
+	#simulation {
+		width: 100vw;
+		height: 100vh;
+		display: block;
+	}
+
 </style>
-<svg width="1920" height="1080"></svg>
 <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://rawgit.com/jashkenas/underscore/master/underscore-min.js"></script>
+<script src="/js/signalr-client.min.js"></script>
+<body><div id="simulation"/></body>
 <script>
-	var svg = d3.select("svg"),
-		width = +svg.attr("width"),
-		height = +svg.attr("height");
 
-	var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-	var simulation = d3.forceSimulation()
-		.force("link", d3.forceLink().id(function(d) { return d.id; }).distance(8))
-		.force("charge", d3.forceManyBody())
-		.force("center", d3.forceCenter(width / 2, height / 2));
+// https://stackoverflow.com/questions/9539294/adding-new-nodes-to-force-directed-layout
+function myGraph(el) {
+
+    // Add and remove elements on the graph object
+    this.addNode = function (node) {
+        nodes.push(node);
+        update();
+    }
+
+    this.removeNode = function (id) {
+        var i = 0;
+        var n = findNode(id);
+        while (i < links.length) {
+            if ((links[i]['source'] === n)||(links[i]['target'] == n)) links.splice(i,1);
+            else i++;
+        }
+        var index = findNodeIndex(id);
+        if(index !== undefined) {
+            nodes.splice(index, 1);
+            update();
+        }
+    }
+
+    this.addLink = function (link) {
+        var sourceNode = findNode(link.source);
+        var targetNode = findNode(link.target);
+
+        if((sourceNode !== undefined) && (targetNode !== undefined)) {
+            links.push({source: sourceNode, target: targetNode, type: link.type});
+            update();
+        }
+	}
+
+	this.removeLink = function (link) {
+		var i = 0;
+		var sourceNode = findNode(link.source);
+		var targetNode = findNode(link.target);
+		
+		while (i < links.length) {
+            if ((links[i]['source'] === sourceNode)&&(links[i]['target'] == targetNode)){
+				links.splice(i,1);
+				update();
+			}
+            else i++;
+        }
+	}
+
+	this.setGraph = function (graph){
+		force.nodes(graph.nodes);
+		force.links(graph.links);
+	}
+
+    var findNode = function (id) {
+        for (var i=0; i < nodes.length; i++) {
+            if (nodes[i].id === id)
+                return nodes[i]
+        };
+    }
+
+    var findNodeIndex = function (id) {
+        for (var i=0; i < nodes.length; i++) {
+            if (nodes[i].id === id)
+                return i
+        };
+    }
+
+    // set up the D3 visualisation in the specified element
+    var w = $(el).innerWidth(),
+        h = $(el).innerHeight();
+
+    var vis = this.vis = d3.select(el).append("svg:svg")
+        .attr("width", w)
+        .attr("height", h);
+
+    var force = d3.layout.force()
+        .gravity(.05)
+        .distance(16)
+        .charge(-100)
+		.size([w, h]);
+
+    var nodes = force.nodes(),
+        links = force.links();
+
+    var update = function () {
+
+        var link = vis.selectAll("line.link")
+            .data(links); //, function(d) { return d.source + "-" + d.target; });
+
+        link.enter().insert("line")
+			.attr("class", function(d){ return "link " + d.type.toLowerCase(); } )
+
+        link.exit().remove();
+
+        var node = vis.selectAll("g.node")
+            .data(nodes); //, function(d) { return d.id;});
+
+        var nodeEnter = node.enter().append("g")
+            .attr("class", "node")
+            .call(force.drag);
+
+        nodeEnter.append("circle")
+			.attr("class", function(d){ return d.type.toLowerCase(); } )
+            .attr("r", "8")
+
+		
+        nodeEnter.append("title")
+            .attr("dx", 12)
+            .attr("dy", ".35em")
+            .text(function(d) {return d.id});
+		
+
+        node.exit().remove();
+
+        force.on("tick", function() {
+          link.attr("x1", function(d) { return d.source.x; })
+              .attr("y1", function(d) { return d.source.y; })
+              .attr("x2", function(d) { return d.target.x; })
+              .attr("y2", function(d) { return d.target.y; });
+
+          node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+        });
+
+        // Restart the force layout.
+        force.start();
+    }
+
+    // Make it all go
+    update();
+}
+
+	var apiConfig = {};
+	var graphSim = new myGraph("#simulation");
 
 	$.get("/config.json")
 	.then(function(config){
-		$.when($.get(config.apiUrl + '/v1/nodes'), $.get(config.apiUrl + '/v1/relationships')).done(function (nodes, relationships) {
+		apiConfig = config;
+
+		$.when($.get(apiConfig.apiUrl + '/v1/nodes'), $.get(apiConfig.apiUrl + '/v1/relationships')).done(function (nodes, relationships) {
 			var graph = {
 				nodes: _.map(nodes[0], function(node) {
 					return { id: (node.name || node.ipAddress), type: node.type };
@@ -57,50 +190,60 @@
 				})
 			};
 
-			var link = svg.append("g")
-				.attr("class", "links")
-				.selectAll("line")
-				.data(graph.links)
-				.enter().append("line")
-				.attr("class", function (d) { return d.type.toLowerCase(); })
-				.attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+			_.each(graph.nodes, function(node){
+				graphSim.addNode(node);
+			});
 
-			var node = svg.append("g")
-				.attr("class", "nodes")
-				.selectAll("circle")
-				.data(graph.nodes)
-				.enter().append("circle")
-				.attr("class", function (d) { return d.type.toLowerCase(); })
-				.attr("r", 5)
-				.attr("fill", function(d) { return color(d.group); })
-				.call(d3.drag()
-					.on("start", dragstarted)
-					.on("drag", dragged)
-					.on("end", dragended));
-
-			node.append("title")
-				.text(function(d) { return d.id; });
-
-			simulation
-				.nodes(graph.nodes)
-				.on("tick", ticked);
-
-			simulation.force("link")
-				.links(graph.links);
-
-			function ticked() {
-				link
-					.attr("x1", function(d) { return d.source.x; })
-					.attr("y1", function(d) { return d.source.y; })
-					.attr("x2", function(d) { return d.target.x; })
-					.attr("y2", function(d) { return d.target.y; });
-
-				node
-					.attr("cx", function(d) { return d.x; })
-					.attr("cy", function(d) { return d.y; });
-			}
+			_.each(graph.links, function(link){
+				graphSim.addLink(link);
+			});
 
 		});
+	})
+	.then(function(){
+		//var connection = $.hubConnection(apiConfig.apiUrl + '/events');
+		var hub = new signalR.HubConnection(apiConfig.apiUrl + '/events');
+		//var hub = connection.createHubProxy('eventHub');
+
+		hub.on('OnAdded', function(items){
+			_.each(items, function(item){
+				switch(item.type){
+					case 'Domain':
+					case 'IpAddress':
+						var node = { id: (item.name || item.ipAddress), type: item.type };
+						graphSim.addNode(node);
+						console.log('Added '+node.type+' ('+node.id+')')
+						break;
+
+					case 'DNS_PTR':
+					case 'DNS_CHILD':
+						var link = { source: (item.ipAddress || item.childDomain), target: (item.domain || item.parentDomain), type: item.type }
+						graphSim.addLink(link);
+						console.log('Added '+link.type+' ('+link.source+'->'+link.target+')')
+						break;
+				}
+			});
+		});
+
+		hub.on('OnRemoved', function(item){
+			switch(item.type){
+				case 'Domain':
+				case 'IpAddress':
+					var node = { id: (item.name || item.ipAddress), type: item.type };
+					graphSim.removeNode(node);
+					console.log('Removed '+node.type+' ('+node.id+')')
+					break;
+
+				case 'DNS_PTR':
+				case 'DNS_CHILD':
+					var link = { source: (item.ipAddress || item.childDomain), target: (item.domain || item.parentDomain), type: item.type }
+					graphSim.removeLink(link);
+					console.log('Removed '+link.type+' ('+link.source+'->'+link.target+')')
+					break;
+			}
+		});
+
+		hub.start();
 	});
 
 	function dragstarted(d) {

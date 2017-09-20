@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +43,7 @@ namespace GraphDb.ExampleData
 
 			Console.WriteLine();
 			Console.WriteLine("Ready to generate sample data, press any key to continue...");
-			Console.Read();
+			Console.ReadKey();
 
 			Console.WriteLine($"Generating sample data...");
 			var exampleData = Generate(1000);
@@ -68,16 +66,14 @@ namespace GraphDb.ExampleData
 			Console.WriteLine("Done generating sample data");
 			Console.WriteLine();
 
-			// TODO: Continue to stream node updates
-			/*
 			Console.WriteLine("Streaming random updates, press any key to quit.");
 			var cancellation = new CancellationTokenSource();
 			var task = Task.Factory.StartNew(() => RandomUpdates(cancellation.Token), cancellation.Token);
-			task.Start();
-			Console.Read();
+			Console.ReadKey();
+			Console.WriteLine("\tStopping random updates...");
+
 			cancellation.Cancel();
 			task.Wait();
-			*/
 		}
 
 		static void PostBatch<T>(Action<IList<T>> post, IEnumerable<T> items, int batchSize)
@@ -96,44 +92,6 @@ namespace GraphDb.ExampleData
 			{
 				post(batch);
 				batch.Clear();
-			}
-		}
-
-		static void RandomUpdates(CancellationToken cancelToken)
-		{
-			while (cancelToken.IsCancellationRequested == false)
-			{
-				var action = Random.Next(3);
-
-				switch (action)
-				{
-					case 0: //Add Domain
-						var domain = GenerateRandomDomain((dn) =>
-						{
-							try
-							{
-								Client.V1NodesDomainsByNameGet(dn);
-								return true;
-							}
-							catch
-							{
-								return false;
-							}
-						});
-
-						Client.V1NodesDomainsPost(new[] {new DomainNode(name: domain),});
-						break;
-
-					case 1: //Delete Domain
-
-						break;
-
-					case 2: //Add PTR
-						break;
-
-					case 3: //Delete PTR
-						break;
-				}
 			}
 		}
 
@@ -231,8 +189,76 @@ namespace GraphDb.ExampleData
 			return ipAddress;
 		}
 
-		private static Regex _regexUnsafeDomainChars = new Regex("[^a-z0-9]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static void RandomUpdates(CancellationToken cancelToken)
+		{
+			while (cancelToken.IsCancellationRequested == false)
+			{
+				Thread.Sleep(3000);
 
+				var action = Random.Next(3);
+
+				int index;
+				switch (action)
+				{
+					case 0: //Add Domain
+						var domain = GenerateRandomDomain((dn) =>
+						{
+							try
+							{
+								Client.V1NodesDomainsByNameGet(dn);
+								return true;
+							}
+							catch
+							{
+								return false;
+							}
+						});
+
+						Client.V1NodesDomainsPost(new[] { new DomainNode(name: domain) });
+						Console.WriteLine($"\tAdded Domain ({domain})");
+						break;
+
+					case 1: //Delete Domain
+						try
+						{
+							index = Random.Next(1000);
+							var node = Client.V1NodesDomainsGet(index, 1).First();
+							Client.V1NodesDomainsByNameDelete(node.Name);
+							Console.WriteLine($"\tRemoved Domain ({node.Name})");
+						}
+						catch { }
+						break;
+
+					case 2: //Add PTR
+						try
+						{
+							index = Random.Next(1000);
+							var domainNode = Client.V1NodesDomainsGet(index, 1).First();
+
+							index = Random.Next(1000);
+							var ipNode = Client.V1NodesIpAddressesGet(index, 1).First();
+
+							Client.V1RelationshipsDnsPtrsPost(new[] { new DnsPtrRelationship(domain: domainNode.Name, ipAddress: ipNode.IpAddress) });
+							Console.WriteLine($"\tAdded DNS_PTR ({domainNode.Name}->{ipNode.IpAddress})");
+						}
+						catch { }
+						break;
+
+					case 3: //Delete PTR
+						try
+						{
+							index = Random.Next(1000);
+							var relationship = Client.V1RelationshipsDnsPtrsGet(index, 1).First();
+							Client.V1RelationshipsDnsPtrsDelete(relationship);
+							Console.WriteLine($"\tRemoved DNS_PTR ({relationship.Domain}->{relationship.IpAddress})");
+						}
+						catch { }
+						break;
+				}
+			}
+		}
+
+		private static readonly Regex _regexUnsafeDomainChars = new Regex("[^a-z0-9]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		static string DomainSafe(string value)
 		{
 			return _regexUnsafeDomainChars.Replace(value, "");

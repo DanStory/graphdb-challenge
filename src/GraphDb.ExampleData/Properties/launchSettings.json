@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GraphDb.ExampleData": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "APIURL": "http://localhost:8080"
+      }
+    }
+  }
+}

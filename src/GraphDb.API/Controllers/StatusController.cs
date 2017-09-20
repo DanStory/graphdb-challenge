@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Net;
+using GraphDb.API.Domain;
+using GraphDb.API.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace GraphDb.API.Controllers
@@ -6,17 +10,32 @@ namespace GraphDb.API.Controllers
     [Route("v1/[controller]")]
     public class StatusController : Controller
     {
-	    private readonly IConfigurationRoot _config;
+	    private readonly INodeReadOnlyRepository<INode> _repository;
 
-	    public StatusController(IConfigurationRoot config)
+	    public StatusController(IConfigurationRoot config, INodeReadOnlyRepository<INode> repository)
 	    {
-		    this._config = config;
+		    this._repository = repository;
 	    }
 
+		/// <summary>
+		/// Get Status of GraphDb.API
+		/// </summary>
+		/// <returns></returns>
         [HttpGet] [HttpHead]
-        public object Get()
+        public Status Get()
         {
-	        return new {State = "Healthy"};
+	        try
+	        {
+		        var nodes = this._repository.All(0, 1);
+	        }
+	        catch (Exception ex)
+	        {
+		        this.Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
+				return new Status { State = "Offline", Error = ex.Message};
+	        }
+	        
+
+	        return new Status { State = "Online"};
         }
     }
 }
