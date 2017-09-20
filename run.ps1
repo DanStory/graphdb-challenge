@@ -1,5 +1,8 @@
 $ErrorActionPreference='Stop'
 
+Import-Module ./functions.psm1 -Force
+"Host Machine: $(Export-HostDockerMachine)"
+
 # https://stackoverflow.com/questions/46042261/in-osx-how-to-open-another-powershell-console-from-a-powershell-script
 Function Start-InNewWindowMacOS {
     param(
@@ -47,7 +50,7 @@ docker rm -f graphdb.exampledata
 
 docker rm graphdb.exampledata -f
 
-$cli = "docker run --interactive --tty --rm --env=APIURL=http://$([System.Net.Dns]::GetHostName()):8080 --name graphdb.exampledata danstory/graphdb.exampledata"
+$cli = "docker run --interactive --tty --rm --env=APIURL=http://$($env:HOSTMACHINE)`:8080 --name graphdb.exampledata danstory/graphdb.exampledata"
 if(($PSVersionTable.Platform -eq $null) -or ($PSVersionTable.Platform -eq 'Windows'))
 {
     Start-Process "cmd.exe" "/C $cli"
