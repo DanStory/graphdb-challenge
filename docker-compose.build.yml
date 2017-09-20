@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  graphdb.api-build:
+    image: microsoft/aspnetcore-build:2.0
+    volumes:
+      - ./src:/src
+    working_dir: /src/GraphDb.API
+    entrypoint: ["sh", "./docker-compose.build.sh"]
+
+  graphdb.exampledata-build:
+    image: microsoft/dotnet:2.0-sdk
+    volumes:
+      - ./src:/src
+    working_dir: /src/GraphDb.ExampleData
+    entrypoint: ["sh", "./docker-compose.build.sh"]

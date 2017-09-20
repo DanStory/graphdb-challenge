@@ -32,10 +32,69 @@ namespace Swagger
         JsonSerializerSettings DeserializationSettings { get; }
 
 
-        /// <summary>
-        /// Gets the IV1RelationshipsDNS.
-        /// </summary>
-        IV1RelationshipsDNS V1RelationshipsDNS { get; }
+        /// <param name='skip'>
+        /// </param>
+        /// <param name='limit'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<DnsChildRelationship>>> V1RelationshipsDnsChildrenGetWithHttpMessagesAsync(int? skip = default(int?), int? limit = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='relationships'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> V1RelationshipsDnsChildrenPostWithHttpMessagesAsync(IList<DnsChildRelationship> relationships = default(IList<DnsChildRelationship>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='relationship'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> V1RelationshipsDnsChildrenDeleteWithHttpMessagesAsync(DnsChildRelationship relationship = default(DnsChildRelationship), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='skip'>
+        /// </param>
+        /// <param name='limit'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<DnsPtrRelationship>>> V1RelationshipsDnsPtrsGetWithHttpMessagesAsync(int? skip = default(int?), int? limit = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='relationships'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> V1RelationshipsDnsPtrsPostWithHttpMessagesAsync(IList<DnsPtrRelationship> relationships = default(IList<DnsPtrRelationship>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='relationship'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> V1RelationshipsDnsPtrsDeleteWithHttpMessagesAsync(DnsPtrRelationship relationship = default(DnsPtrRelationship), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='skip'>
         /// </param>

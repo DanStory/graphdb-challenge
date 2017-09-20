@@ -19,7 +19,7 @@
 
 	    public static string[] TopLevelDomains =
 		{
-		    "com", "info", "biz", "org", "int", "edu", "gov"
+		    "com.", "info.", "biz.", "org.", "int.", "edu.", "gov."
 	    };
     }
 }

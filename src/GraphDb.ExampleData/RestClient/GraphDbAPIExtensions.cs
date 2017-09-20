@@ -22,6 +22,158 @@ namespace Swagger
             /// </param>
             /// <param name='limit'>
             /// </param>
+            public static IList<DnsChildRelationship> V1RelationshipsDnsChildrenGet(this IGraphDbAPI operations, int? skip = default(int?), int? limit = default(int?))
+            {
+                return operations.V1RelationshipsDnsChildrenGetAsync(skip, limit).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='skip'>
+            /// </param>
+            /// <param name='limit'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<IList<DnsChildRelationship>> V1RelationshipsDnsChildrenGetAsync(this IGraphDbAPI operations, int? skip = default(int?), int? limit = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.V1RelationshipsDnsChildrenGetWithHttpMessagesAsync(skip, limit, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationships'>
+            /// </param>
+            public static void V1RelationshipsDnsChildrenPost(this IGraphDbAPI operations, IList<DnsChildRelationship> relationships = default(IList<DnsChildRelationship>))
+            {
+                operations.V1RelationshipsDnsChildrenPostAsync(relationships).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationships'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task V1RelationshipsDnsChildrenPostAsync(this IGraphDbAPI operations, IList<DnsChildRelationship> relationships = default(IList<DnsChildRelationship>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.V1RelationshipsDnsChildrenPostWithHttpMessagesAsync(relationships, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationship'>
+            /// </param>
+            public static void V1RelationshipsDnsChildrenDelete(this IGraphDbAPI operations, DnsChildRelationship relationship = default(DnsChildRelationship))
+            {
+                operations.V1RelationshipsDnsChildrenDeleteAsync(relationship).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationship'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task V1RelationshipsDnsChildrenDeleteAsync(this IGraphDbAPI operations, DnsChildRelationship relationship = default(DnsChildRelationship), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.V1RelationshipsDnsChildrenDeleteWithHttpMessagesAsync(relationship, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='skip'>
+            /// </param>
+            /// <param name='limit'>
+            /// </param>
+            public static IList<DnsPtrRelationship> V1RelationshipsDnsPtrsGet(this IGraphDbAPI operations, int? skip = default(int?), int? limit = default(int?))
+            {
+                return operations.V1RelationshipsDnsPtrsGetAsync(skip, limit).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='skip'>
+            /// </param>
+            /// <param name='limit'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<IList<DnsPtrRelationship>> V1RelationshipsDnsPtrsGetAsync(this IGraphDbAPI operations, int? skip = default(int?), int? limit = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.V1RelationshipsDnsPtrsGetWithHttpMessagesAsync(skip, limit, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationships'>
+            /// </param>
+            public static void V1RelationshipsDnsPtrsPost(this IGraphDbAPI operations, IList<DnsPtrRelationship> relationships = default(IList<DnsPtrRelationship>))
+            {
+                operations.V1RelationshipsDnsPtrsPostAsync(relationships).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationships'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task V1RelationshipsDnsPtrsPostAsync(this IGraphDbAPI operations, IList<DnsPtrRelationship> relationships = default(IList<DnsPtrRelationship>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.V1RelationshipsDnsPtrsPostWithHttpMessagesAsync(relationships, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationship'>
+            /// </param>
+            public static void V1RelationshipsDnsPtrsDelete(this IGraphDbAPI operations, DnsPtrRelationship relationship = default(DnsPtrRelationship))
+            {
+                operations.V1RelationshipsDnsPtrsDeleteAsync(relationship).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='relationship'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task V1RelationshipsDnsPtrsDeleteAsync(this IGraphDbAPI operations, DnsPtrRelationship relationship = default(DnsPtrRelationship), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.V1RelationshipsDnsPtrsDeleteWithHttpMessagesAsync(relationship, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='skip'>
+            /// </param>
+            /// <param name='limit'>
+            /// </param>
             public static IList<DomainNode> V1NodesDomainsGet(this IGraphDbAPI operations, int? skip = default(int?), int? limit = default(int?))
             {
                 return operations.V1NodesDomainsGetAsync(skip, limit).GetAwaiter().GetResult();
