@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:7730/",
+      "applicationUrl": "http://localhost:7730/swagger",
       "sslPort": 0
     }
   },
@@ -12,6 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "Neo4jUri": "bolt://localhost:7687",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

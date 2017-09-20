@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
@@ -11,7 +14,7 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace GraphDb.API
 {
-    public class Startup
+	public partial class Startup
     {
 	    private readonly Container _container = new Container()
 	    {
@@ -45,20 +48,28 @@ namespace GraphDb.API
 				});
 	        });
 
-	        services.AddMvc();
+			services.AddMvc();
+
+	        services.AddSignalR(config =>
+	        {
+		        config.JsonSerializerSettings.Formatting = Formatting.None;
+				config.JsonSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+	        });
 		}
 
         private void ConfigureContainerService(IServiceCollection services)
         {
 	        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
 	        services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(this._container));
+
+	        services.AddSingleton<IHubActivator<EventHub>>(new SimpleInjectorHubActivator<IEventHub, EventHub>(this._container));
 
 			services.EnableSimpleInjectorCrossWiring(this._container);
 			services.UseSimpleInjectorAspNetRequestScoping(this._container);
         }
 
-	    private void ConfigureSwaggerService(IServiceCollection services)
+
+		private void ConfigureSwaggerService(IServiceCollection services)
 	    {
 		    services.AddSwaggerGen(options =>
 		    {
@@ -79,22 +90,26 @@ namespace GraphDb.API
 	        this.ConfigureMvc(app, env);
 
 			this.ConfigureSwagger(app, env);
-        }
+
+	        this._container.Verify(env.IsDevelopment() ? VerificationOption.VerifyAndDiagnose : VerificationOption.VerifyOnly);
+		}
 
 	    private void ConfigureMvc(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			app.UseCors("CORS");
-
 			app.UseMvc();
-	    }
+
+			app.UseSignalR(config =>
+			{
+				config.MapHub<EventHub>("events");
+			});
+		}
 
 		private void ConfigureContainer(IApplicationBuilder app, IHostingEnvironment env)
 	    {
 		    this._container.RegisterMvcControllers(app);
 
 			Registry.Register(this._container);
-
-		    this._container.Verify(env.IsDevelopment() ? VerificationOption.VerifyAndDiagnose : VerificationOption.VerifyOnly);
 		}
 
 	    private void ConfigureSwagger(IApplicationBuilder app, IHostingEnvironment env)
