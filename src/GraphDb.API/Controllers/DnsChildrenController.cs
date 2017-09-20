@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GraphDb.API.Controllers
 {
-    [Route("v1/Relationships/DNS_CHILDs")]
+    [Route("v1/Relationships/[controller]")]
     public class DnsChildrenController : Controller
     {
 	    private readonly INodeRelationshipRepository<DnsChildRelationship> _repository;

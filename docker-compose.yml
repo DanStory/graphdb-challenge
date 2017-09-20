@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  graphdb.api:
+    image: danstory/graphdb.api
+    build:
+      context: ./src/GraphDb.API
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    links:
+      - graphdb.neo4j
+    environment:
+      - Neo4jUri=bolt://graphdb.neo4j:7687
+
+  graphdb.client:
+    image: danstory/graphdb.client
+    build:
+      context: ./src/GraphDb.Client
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    environment:
+      - APIURL=http://localhost:8080
+
+  graphdb.neo4j:
+    image: "neo4j:3.2"
+    ports:
+      - "7474:7474"
+    environment:
+      - NEO4J_AUTH=none

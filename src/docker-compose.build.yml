@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-  graphdb.api-build:
-    image: microsoft/aspnetcore-build:2.0
-    volumes:
-      - .:/src
-    working_dir: /src
-    entrypoint: ["sh", "./docker-compose.build.sh"]
