@@ -21,7 +21,7 @@ services:
     ports:
       - "8081:80"
     environment:
-      - APIURL=http://localhost:8080
+      - APIURL=http://${HOSTMACHINE}:8080
 
   graphdb.neo4j:
     image: "neo4j:3.2"
