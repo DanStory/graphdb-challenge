@@ -10,3 +10,5 @@
    `docker` and `docker-compose` are required dependencies to compile and run applications (also Powershell Core for MacOS).
    * `./build.ps1` to compile .NET Core applications and build docker images.
    * `./run.ps1` executes `docker-compose` and runs an interactive shell to `GraphDb.ExampleData` docker container.
+     * Web API Swagger UI: http://localhost:8080/swagger
+     * Web Client UI: http://localhost:8081
